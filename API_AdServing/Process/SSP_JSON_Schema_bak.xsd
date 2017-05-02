@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	 xmlns="http://www.tibco.com/schemas/MobCastleAD_JSON_1120/API_SSP/Sample/Schema.xsd"
+	 targetNamespace="http://www.tibco.com/schemas/MobCastleAD_JSON_1120/API_SSP/Sample/Schema.xsd"
+	 elementFormDefault="qualified"
+	 attributeFormDefault="unqualified">
+	<xs:element name="root">
+		<xs:complexType/>
+	</xs:element>
+
+<!--  response -->
+  <xs:element name="adservresponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="id"/>
+        <xs:element ref="idname"/>
+        <xs:element ref="w"/>
+        <xs:element ref="h"/>
+        <xs:element ref="adcounts"/>
+        <xs:element ref="adserving" minOccurs="0" maxOccurs="unbounded" />
+        <xs:element ref="timestamp"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="adserving">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="camppair" minOccurs="0" maxOccurs="unbounded" />
+        <xs:element name="seat" type="xs:int" minOccurs="0"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="camppair">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="campid" minOccurs="0"/>
+        <xs:element ref="productname"/>
+        <xs:element ref="campprice"/>
+<!--         <xs:element ref="adid" minOccurs="0" maxOccurs="unbounded"/> -->
+        <xs:element ref="w"/>
+        <xs:element ref="h"/>
+        <xs:element ref="creative_url"/>
+        <xs:element ref="camptl"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="id" type="xs:string"/>
+  <xs:element name="campid" type="xs:string"/>
+  <xs:element name="idname" type="xs:string"/>
+  <xs:element name="productname" type="xs:string"/>
+  <xs:element name="camptl" type="xs:string"/>
+  <xs:element name="campprice" type="xs:double"/>
+  <xs:element name="timestamp" type="xs:string"/>
+  <xs:element name="adcounts" type="xs:integer"/>
+
+  <xs:element name="advertiserid" type="xs:integer"/>
+  <xs:element name="creative_url" type="xs:anyURI"/>
+<!--  response -->
+
+<!--  request -->
+  <xs:element name="adservrequest">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="id"/>
+        <xs:element ref="idname"/>
+        <xs:element ref="w"/>
+        <xs:element ref="h"/>
+        <xs:element ref="adcounts"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:element name="device">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="ua"/>
+        <xs:element ref="ip"/>
+        <xs:element ref="os"/>
+        <xs:element ref="osv"/>
+        <xs:element ref="h"/>
+        <xs:element ref="w"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="ua" type="xs:string"/>
+  <xs:element name="ip" type="xs:NMTOKEN"/>
+  <xs:element name="os" type="xs:NCName"/>
+  <xs:element name="osv" type="xs:decimal"/>
+  <xs:element name="w" type="xs:integer"/>
+  <xs:element name="h" type="xs:integer"/>
+<!--  request -->
+</xs:schema>

@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns="http://www.tibco.com/pe/DeployedVarsType" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <pd:name>API_AdServing/RedisCommon/SetContent_Campaign.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startType>
+        <xsd:element name="root">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element name="campaign_id" type="xsd:int" minOccurs="0"/>
+                    <xsd:element name="campaign_expend_n" type="xsd:double" minOccurs="0"/>
+                    <xsd:element name="campaign_tl" type="xsd:string" minOccurs="0"/>
+                    <xsd:element name="productname" type="xsd:string" minOccurs="0"/>
+                    <xsd:element name="creative_id" type="xsd:string" minOccurs="0"/>
+                    <xsd:element name="allid" type="xsd:string" minOccurs="0"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+    </pd:startType>
+    <pd:startX>150</pd:startX>
+    <pd:startY>64</pd:startY>
+    <pd:returnBindings/>
+    <pd:endName>End</pd:endName>
+    <pd:endX>290</pd:endX>
+    <pd:endY>197</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1481529034665</pd:targetNamespace>
+    <pd:activity name="SetToRedis">
+        <pd:type>com.tibco.plugin.java.JavaActivity</pd:type>
+        <pd:resourceType>ae.javapalette.javaActivity</pd:resourceType>
+        <pd:x>291</pd:x>
+        <pd:y>62</pd:y>
+        <config>
+            <fileName>SetContent_CampaignSetToRedis</fileName>
+            <packageName>API_AdServing.RedisCommon.SetContent_Campaign</packageName>
+            <fullsource>package API_AdServing.RedisCommon.SetContent_Campaign;
+import java.util.*;
+import java.io.*;
+import redis.clients.jedis.Jedis;
+@SuppressWarnings("unchecked")
+public class SetContent_CampaignSetToRedis{
+/****** START SET/GET METHOD, DO NOT MODIFY *****/
+	protected String allids = "";
+	protected String productname = "";
+	protected String campaign_expend_n = "";
+	protected String campaign_tl = "";
+	protected String campaign_id = "";
+	protected String redis_host = "";
+	protected int redis_port = 0;
+	protected String redis_pass = "";
+	protected String creative_id = "";
+	protected String picpath = "";
+	public String getallids() {
+		return allids;
+	}
+	public void setallids(String val) {
+		allids = val;
+	}
+	public String getproductname() {
+		return productname;
+	}
+	public void setproductname(String val) {
+		productname = val;
+	}
+	public String getcampaign_expend_n() {
+		return campaign_expend_n;
+	}
+	public void setcampaign_expend_n(String val) {
+		campaign_expend_n = val;
+	}
+	public String getcampaign_tl() {
+		return campaign_tl;
+	}
+	public void setcampaign_tl(String val) {
+		campaign_tl = val;
+	}
+	public String getcampaign_id() {
+		return campaign_id;
+	}
+	public void setcampaign_id(String val) {
+		campaign_id = val;
+	}
+	public String getredis_host() {
+		return redis_host;
+	}
+	public void setredis_host(String val) {
+		redis_host = val;
+	}
+	public int getredis_port() {
+		return redis_port;
+	}
+	public void setredis_port(int val) {
+		redis_port = val;
+	}
+	public String getredis_pass() {
+		return redis_pass;
+	}
+	public void setredis_pass(String val) {
+		redis_pass = val;
+	}
+	public String getcreative_id() {
+		return creative_id;
+	}
+	public void setcreative_id(String val) {
+		creative_id = val;
+	}
+	public String getpicpath() {
+		return picpath;
+	}
+	public void setpicpath(String val) {
+		picpath = val;
+	}
+/****** END SET/GET METHOD, DO NOT MODIFY *****/
+	public SetContent_CampaignSetToRedis() {
+	}
+	public void invoke() throws Exception {
+/* Available Variables: DO NOT MODIFY
+	In  : String allids
+	In  : String productname
+	In  : String campaign_expend_n
+	In  : String campaign_tl
+	In  : String campaign_id
+	In  : String redis_host
+	In  : int redis_port
+	In  : String redis_pass
+	In  : String creative_id
+	In  : String picpath
+* Available Variables: DO NOT MODIFY *****/
+HashMap map= new HashMap();
+map.put("campaign_expend_n",campaign_expend_n);
+map.put("campaign_tl",campaign_tl);
+map.put("campaign_id",campaign_id);
+map.put("productname",productname);
+map.put("creative_id",creative_id);
+map.put("picpath",picpath);
+
+Jedis jedis = new Jedis(redis_host,redis_port,100000);
+jedis.auth(redis_pass);
+jedis.hmset(allids,map);}
+}
+</fullsource>
+            <inputData>
+                <row>
+                    <fieldName>allids</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+                <row>
+                    <fieldName>productname</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+                <row>
+                    <fieldName>campaign_expend_n</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+                <row>
+                    <fieldName>campaign_tl</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+                <row>
+                    <fieldName>campaign_id</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+                <row>
+                    <fieldName>redis_host</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+                <row>
+                    <fieldName>redis_port</fieldName>
+                    <fieldType>int</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+                <row>
+                    <fieldName>redis_pass</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+                <row>
+                    <fieldName>creative_id</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+                <row>
+                    <fieldName>picpath</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+            </inputData>
+            <byteCode>
+                <class>
+                    <name>SetContent_CampaignSetToRedis</name>
+                    <byteCode>yv66vgAAADMAZgkAGwBKCQAbAEsJABsATAkAGwBNCQAbAE4JABsATwkAGwBQCQAbAFEJABsAUgkAGwBTCgAcAFQIAFUHAFYKAA0AVAgAIAoADQBXCAAhCAAiCAAfCAAnCAAoBwBYAwABhqAKABYAWQoAFgBaCgAWAFsHAFwHAF0BAAZhbGxpZHMBABJMamF2YS9sYW5nL1N0cmluZzsBAAtwcm9kdWN0bmFtZQEAEWNhbXBhaWduX2V4cGVuZF9uAQALY2FtcGFpZ25fdGwBAAtjYW1wYWlnbl9pZAEACnJlZGlzX2hvc3QBAApyZWRpc19wb3J0AQABSQEACnJlZGlzX3Bhc3MBAAtjcmVhdGl2ZV9pZAEAB3BpY3BhdGgBAAlnZXRhbGxpZHMBABQoKUxqYXZhL2xhbmcvU3RyaW5nOwEABENvZGUBAA9MaW5lTnVtYmVyVGFibGUBAAlzZXRhbGxpZHMBABUoTGphdmEvbGFuZy9TdHJpbmc7KVYBAA5nZXRwcm9kdWN0bmFtZQEADnNldHByb2R1Y3RuYW1lAQAUZ2V0Y2FtcGFpZ25fZXhwZW5kX24BABRzZXRjYW1wYWlnbl9leHBlbmRfbgEADmdldGNhbXBhaWduX3RsAQAOc2V0Y2FtcGFpZ25fdGwBAA5nZXRjYW1wYWlnbl9pZAEADnNldGNhbXBhaWduX2lkAQANZ2V0cmVkaXNfaG9zdAEADXNldHJlZGlzX2hvc3QBAA1nZXRyZWRpc19wb3J0AQADKClJAQANc2V0cmVkaXNfcG9ydAEABChJKVYBAA1nZXRyZWRpc19wYXNzAQANc2V0cmVkaXNfcGFzcwEADmdldGNyZWF0aXZlX2lkAQAOc2V0Y3JlYXRpdmVfaWQBAApnZXRwaWNwYXRoAQAKc2V0cGljcGF0aAEABjxpbml0PgEAAygpVgEABmludm9rZQEACkV4Y2VwdGlvbnMHAF4BAApTb3VyY2VGaWxlAQAiU2V0Q29udGVudF9DYW1wYWlnblNldFRvUmVkaXMuamF2YQwAHQAeDAAfAB4MACAAHgwAIQAeDAAiAB4MACMAHgwAJAAlDAAmAB4MACcAHgwAKAAeDABDAEQBAAABABFqYXZhL3V0aWwvSGFzaE1hcAwAXwBgAQAZcmVkaXMvY2xpZW50cy9qZWRpcy9KZWRpcwwAQwBhDABiAGMMAGQAZQEAS0FQSV9BZFNlcnZpbmcvUmVkaXNDb21tb24vU2V0Q29udGVudF9DYW1wYWlnbi9TZXRDb250ZW50X0NhbXBhaWduU2V0VG9SZWRpcwEAEGphdmEvbGFuZy9PYmplY3QBABNqYXZhL2xhbmcvRXhjZXB0aW9uAQADcHV0AQA4KExqYXZhL2xhbmcvT2JqZWN0O0xqYXZhL2xhbmcvT2JqZWN0OylMamF2YS9sYW5nL09iamVjdDsBABcoTGphdmEvbGFuZy9TdHJpbmc7SUkpVgEABGF1dGgBACYoTGphdmEvbGFuZy9TdHJpbmc7KUxqYXZhL2xhbmcvU3RyaW5nOwEABWhtc2V0AQA1KExqYXZhL2xhbmcvU3RyaW5nO0xqYXZhL3V0aWwvTWFwOylMamF2YS9sYW5nL1N0cmluZzsAIQAbABwAAAAKAAQAHQAeAAAABAAfAB4AAAAEACAAHgAAAAQAIQAeAAAABAAiAB4AAAAEACMAHgAAAAQAJAAlAAAABAAmAB4AAAAEACcAHgAAAAQAKAAeAAAAFgABACkAKgABACsAAAAdAAEAAQAAAAUqtAABsAAAAAEALAAAAAYAAQAAABMAAQAtAC4AAQArAAAAIgACAAIAAAAGKiu1AAGxAAAAAQAsAAAACgACAAAAFgAFABcAAQAvACoAAQArAAAAHQABAAEAAAAFKrQAArAAAAABACwAAAAGAAEAAAAZAAEAMAAuAAEAKwAAACIAAgACAAAABiortQACsQAAAAEALAAAAAoAAgAAABwABQAdAAEAMQAqAAEAKwAAAB0AAQABAAAABSq0AAOwAAAAAQAsAAAABgABAAAAHwABADIALgABACsAAAAiAAIAAgAAAAYqK7UAA7EAAAABACwAAAAKAAIAAAAiAAUAIwABADMAKgABACsAAAAdAAEAAQAAAAUqtAAEsAAAAAEALAAAAAYAAQAAACUAAQA0AC4AAQArAAAAIgACAAIAAAAGKiu1AASxAAAAAQAsAAAACgACAAAAKAAFACkAAQA1ACoAAQArAAAAHQABAAEAAAAFKrQABbAAAAABACwAAAAGAAEAAAArAAEANgAuAAEAKwAAACIAAgACAAAABiortQAFsQAAAAEALAAAAAoAAgAAAC4ABQAvAAEANwAqAAEAKwAAAB0AAQABAAAABSq0AAawAAAAAQAsAAAABgABAAAAMQABADgALgABACsAAAAiAAIAAgAAAAYqK7UABrEAAAABACwAAAAKAAIAAAA0AAUANQABADkAOgABACsAAAAdAAEAAQAAAAUqtAAHrAAAAAEALAAAAAYAAQAAADcAAQA7ADwAAQArAAAAIgACAAIAAAAGKhu1AAexAAAAAQAsAAAACgACAAAAOgAFADsAAQA9ACoAAQArAAAAHQABAAEAAAAFKrQACLAAAAABACwAAAAGAAEAAAA9AAEAPgAuAAEAKwAAACIAAgACAAAABiortQAIsQAAAAEALAAAAAoAAgAAAEAABQBBAAEAPwAqAAEAKwAAAB0AAQABAAAABSq0AAmwAAAAAQAsAAAABgABAAAAQwABAEAALgABACsAAAAiAAIAAgAAAAYqK7UACbEAAAABACwAAAAKAAIAAABGAAUARwABAEEAKgABACsAAAAdAAEAAQAAAAUqtAAKsAAAAAEALAAAAAYAAQAAAEkAAQBCAC4AAQArAAAAIgACAAIAAAAGKiu1AAqxAAAAAQAsAAAACgACAAAATAAFAE0AAQBDAEQAAQArAAAAhAACAAEAAABAKrcACyoSDLUAASoSDLUAAioSDLUAAyoSDLUABCoSDLUABSoSDLUABioDtQAHKhIMtQAIKhIMtQAJKhIMtQAKsQAAAAEALAAAADIADAAAAE8ABAAIAAoACQAQAAoAFgALABwADAAiAA0AKAAOAC0ADwAzABAAOQARAD8AUAABAEUARAACACsAAACsAAUAAwAAAHC7AA1ZtwAOTCsSDyq0AAO2ABBXKxIRKrQABLYAEFcrEhIqtAAFtgAQVysSEyq0AAK2ABBXKxIUKrQACbYAEFcrEhUqtAAKtgAQV7sAFlkqtAAGKrQABxIXtwAYTSwqtAAItgAZVywqtAABK7YAGlexAAAAAQAsAAAAKgAKAAAAXgAIAF8AEwBgAB4AYQApAGIANABjAD8AZABKAGYAXABnAGUAaABGAAAABAABAEcAAQBIAAAAAgBJ</byteCode>
+                </class>
+            </byteCode>
+        </config>
+        <pd:inputBindings>
+            <javaCodeActivityInput>
+                <xsl:if test="$Start/root/allid">
+                    <allids>
+                        <xsl:value-of select="$Start/root/allid"/>
+                    </allids>
+                </xsl:if>
+                <xsl:if test="$Start/root/productname">
+                    <productname>
+                        <xsl:value-of select="$Start/root/productname"/>
+                    </productname>
+                </xsl:if>
+                <xsl:if test="$Start/root/campaign_expend_n">
+                    <campaign_expend_n>
+                        <xsl:value-of select="$Start/root/campaign_expend_n"/>
+                    </campaign_expend_n>
+                </xsl:if>
+                <xsl:if test="$Start/root/campaign_tl">
+                    <campaign_tl>
+                        <xsl:value-of select="$Start/root/campaign_tl"/>
+                    </campaign_tl>
+                </xsl:if>
+                <xsl:if test="$Start/root/campaign_id">
+                    <campaign_id>
+                        <xsl:value-of select="$Start/root/campaign_id"/>
+                    </campaign_id>
+                </xsl:if>
+                <redis_host>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/SSPNewRedis/ip"/>
+                </redis_host>
+                <redis_port>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/SSPNewRedis/port"/>
+                </redis_port>
+                <redis_pass>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/SSPNewRedis/pass"/>
+                </redis_pass>
+                <xsl:if test="$Start/root/creative_id">
+                    <creative_id>
+                        <xsl:value-of select="$Start/root/creative_id"/>
+                    </creative_id>
+                </xsl:if>
+                <picpath>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/SSPNewRedis/picpath"/>
+                </picpath>
+            </javaCodeActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>SetToRedis</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>otherwise</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>SetToRedis</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>1=1</pd:xpath>
+    </pd:transition>
+</pd:ProcessDefinition>

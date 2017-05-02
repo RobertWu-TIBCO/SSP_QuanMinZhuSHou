@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	 xmlns="http://www.tibco.com/schemas/MobCastleAD_JSON_1120/API_SSP/Sample/Schema.xsd"
+	 targetNamespace="http://www.tibco.com/schemas/MobCastleAD_JSON_1120/API_SSP/Sample/Schema.xsd"
+	 elementFormDefault="qualified"
+	 attributeFormDefault="unqualified">
+	<xs:element name="root">
+		<xs:complexType/>
+	</xs:element>
+
+<!--  response -->
+  <xs:element name="adservresponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="responsestatus"/>
+        <xs:element ref="id"  minOccurs="0"/>
+        <xs:element ref="idname"  minOccurs="0"/>
+        <xs:element ref="adcounts"  minOccurs="0"/>
+        <xs:element ref="adserving" minOccurs="0" maxOccurs="unbounded" />
+        <xs:element ref="timestamp"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="adserving">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="campid" minOccurs="0"/>
+        <xs:element ref="product_name" minOccurs="0"/>
+        <xs:element ref="product_lp" minOccurs="0"/>
+        <xs:element ref="campprice"/>
+        <xs:element ref="creative_url" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="creative_list_response" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="camp_tl"/>
+        <xs:element ref="app_id" minOccurs="0"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="responsestatus" type="xs:string"/>
+  <xs:element name="id" type="xs:string"/>
+  <xs:element name="app_id" type="xs:string"/>
+  <xs:element name="campid" type="xs:string"/>
+  <xs:element name="idname" type="xs:string"/>
+  <xs:element name="operation" type="xs:string"/>
+  <xs:element name="product_name" type="xs:string"/>
+  <xs:element name="product_lp" type="xs:string"/>
+  <xs:element name="camp_tl" type="xs:string"/>
+  <xs:element name="campprice" type="xs:double"/>
+  <xs:element name="timestamp" type="xs:string"/>
+  <xs:element name="adcounts" type="xs:integer"/>
+
+  <xs:element name="advertiserid" type="xs:integer"/>
+  <xs:element name="creative_url" type="xs:anyURI"/>
+<!--  response -->
+
+<!--  request -->
+  <xs:element name="adservrequest">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="id"  minOccurs="0"/>
+        <xs:element ref="idname"  minOccurs="0"/>
+        <xs:element ref="adcounts"  minOccurs="0"/>
+        <xs:element ref="operation"  minOccurs="0"/>
+		 <xs:element ref="creative_list" minOccurs="0" maxOccurs="unbounded"/>
+		 <xs:element ref="product_list" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:element name="product_list">
+  	<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="creative_list" minOccurs="0"  maxOccurs="unbounded"/>
+				<xs:element ref="creative_id" minOccurs="0" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	
+	  <xs:element name="creative_list_response">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="w" minOccurs="0"/>
+				<xs:element ref="h" minOccurs="0"/>
+				<xs:element ref="creative_url" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	
+  <xs:element name="creative_list">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="w" minOccurs="0"/>
+				<xs:element ref="h" minOccurs="0"/>
+				<xs:element ref="type" minOccurs="0"/>
+				<xs:element ref="format" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	
+  <xs:element name="device">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="ua"/>
+        <xs:element ref="ip"/>
+        <xs:element ref="os"/>
+        <xs:element ref="osv"/>
+        <xs:element ref="h"/>
+        <xs:element ref="w"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:element name="type" type="xs:string" />
+  <xs:element name="format" type="xs:string" />
+	<xs:element name="size" type="xs:string" />
+	<xs:element name="creative_id" type="xs:string" />
+				
+  <xs:element name="ua" type="xs:string"/>
+  <xs:element name="ip" type="xs:NMTOKEN"/>
+  <xs:element name="os" type="xs:NCName"/>
+  <xs:element name="osv" type="xs:decimal"/>
+  <xs:element name="w" type="xs:integer"/>
+  <xs:element name="h" type="xs:integer"/>
+<!--  request -->
+
+	<xs:element name="SubEnd">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="JSONResponse" type="xs:string" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	
+</xs:schema>

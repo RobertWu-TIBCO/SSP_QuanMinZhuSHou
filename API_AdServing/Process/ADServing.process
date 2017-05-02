@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:ns1="http://www.tibco.com/pe/DeployedVarsType" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns="http://www.tibco.com/namespaces/tnt/plugins/json" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tib="http://www.tibco.com/bw/xslt/custom-functions" xmlns:pfx="http://www.tibco.com/schemas/MobCastleAD_JSON_1120/API_SSP/Sample/Schema.xsd">
+    <xsd:import namespace="http://www.tibco.com/schemas/MobCastleAD_JSON_1120/API_SSP/Sample/Schema.xsd" schemaLocation="/API_AdServing/Process/SSP_JSON_Schema.xsd"/>
+    <pd:name>API_AdServing/Process/ADServing.process</pd:name>
+    <pd:startName>ADServRequest</pd:startName>
+    <pd:startX>0</pd:startX>
+    <pd:startY>0</pd:startY>
+    <pd:returnBindings/>
+    <pd:starter name="ADServRequest">
+        <pd:type>com.tibco.plugin.http.HTTPEventSource</pd:type>
+        <pd:resourceType>httppalette.httpEventSource</pd:resourceType>
+        <pd:description>bidresponse element should get removed</pd:description>
+        <pd:x>59</pd:x>
+        <pd:y>63</pd:y>
+        <config>
+            <outputMode>String</outputMode>
+            <defaultEncoding>ISO8859_1</defaultEncoding>
+            <inputOutputVersion>5.3.0</inputOutputVersion>
+            <newMimeSupport>true</newMimeSupport>
+            <sharedChannel>/API_AdServing/Process/ADServing.sharedhttp</sharedChannel>
+            <Headers>
+                <xsd:element name="root">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="Accept" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Accept-Charset" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Accept-Encoding" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Content-Type" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Content-Length" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Connection" type="xsd:string" minOccurs="0" maxOccurs="unbounded"/>
+                            <xsd:element name="Cookie" type="xsd:string" minOccurs="0" maxOccurs="unbounded"/>
+                            <xsd:element name="Pragma" type="xsd:string" minOccurs="0" maxOccurs="unbounded"/>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </Headers>
+        </config>
+        <pd:inputBindings/>
+    </pd:starter>
+    <pd:endName>End</pd:endName>
+    <pd:endX>456</pd:endX>
+    <pd:endY>78</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1481009561257</pd:targetNamespace>
+    <pd:activity name="refuse">
+        <pd:type>com.tibco.plugin.http.HTTPResponseActivity</pd:type>
+        <pd:resourceType>httppalette.httpWebResponse</pd:resourceType>
+        <pd:x>457</pd:x>
+        <pd:y>199</pd:y>
+        <config>
+            <closeConnection>true</closeConnection>
+            <eventSource>ADServRequest</eventSource>
+            <Headers>
+                <xsd:element name="root">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="StatusLine" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Content-Type" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Set-Cookie" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Pragma" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Location" type="xsd:string" minOccurs="0"/>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </Headers>
+        </config>
+        <pd:inputBindings>
+            <ResponseActivityInput>
+                <asciiContent>
+                    <xsl:value-of select="$NotAllowed/ns:ActivityOutputClass/jsonString"/>
+                </asciiContent>
+                <Headers>
+                    <StatusLine>
+                        <xsl:value-of select="&quot;HTTP/1.1 204&quot;"/>
+                    </StatusLine>
+                </Headers>
+            </ResponseActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="ParseRequest">
+        <pd:type>com.tibco.plugin.json.activities.JSONParserActivity</pd:type>
+        <pd:resourceType>ae.activities.JSONParserActivity</pd:resourceType>
+        <pd:x>55</pd:x>
+        <pd:y>205</pd:y>
+        <config>
+            <SchemaType>xsdType</SchemaType>
+            <BadgerfishCheck>false</BadgerfishCheck>
+            <ActivityOutputEditor ref="pfx:adservrequest"/>
+        </config>
+        <pd:inputBindings>
+            <ns:ActivityInputClass>
+                <jsonString>
+                    <xsl:value-of select="$ADServRequest/ProcessStarterOutput/PostData"/>
+                </jsonString>
+            </ns:ActivityInputClass>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Token_AdCounts_Filter">
+        <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+        <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+        <pd:x>189</pd:x>
+        <pd:y>203</pd:y>
+        <config>
+            <element>
+                <xsd:element name="root">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="token_ok" type="xsd:boolean" minOccurs="0"/>
+                            <xsd:element name="adcount_ok" type="xsd:boolean" minOccurs="0"/>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </element>
+        </config>
+        <pd:inputBindings>
+            <root>
+                <xsl:choose>
+                    <xsl:when test="contains($_globalVariables/ns1:GlobalVariables/ADServing/idnames, $ParseRequest/ns:ActivityOutputClass/pfx:adservrequest/pfx:idname)">
+                        <token_ok>
+                            <xsl:value-of select="1"/>
+                        </token_ok>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <token_ok>
+                            <xsl:value-of select="0"/>
+                        </token_ok>
+                    </xsl:otherwise>
+                </xsl:choose>
+                <xsl:choose>
+                    <xsl:when test="$ParseRequest/ns:ActivityOutputClass/pfx:adservrequest/pfx:adcounts>0">
+                        <adcount_ok>
+                            <xsl:value-of select="1"/>
+                        </adcount_ok>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <adcount_ok>
+                            <xsl:value-of select="0"/>
+                        </adcount_ok>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </root>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="ADServResponse">
+        <pd:type>com.tibco.plugin.http.HTTPResponseActivity</pd:type>
+        <pd:resourceType>httppalette.httpWebResponse</pd:resourceType>
+        <pd:x>323</pd:x>
+        <pd:y>75</pd:y>
+        <config>
+            <closeConnection>true</closeConnection>
+            <eventSource>ADServRequest</eventSource>
+            <Headers>
+                <xsd:element name="root">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="StatusLine" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Content-Type" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Set-Cookie" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Pragma" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Location" type="xsd:string" minOccurs="0"/>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </Headers>
+        </config>
+        <pd:inputBindings>
+            <ResponseActivityInput>
+                <asciiContent>
+                    <xsl:value-of select="$ADSubAuto/pfx:SubEnd/pfx:JSONResponse"/>
+                </asciiContent>
+            </ResponseActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="ADSubAuto">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>190</pd:x>
+        <pd:y>74</pd:y>
+        <config>
+            <processName>/API_AdServing/Process/quanminzhibo_creatives.process</processName>
+            <processNameXPath>concat(
+"/API_AdServing/Process/",
+$ParseRequest/ns:ActivityOutputClass/pfx:adservrequest/pfx:idname,
+"_",
+$ParseRequest/ns:ActivityOutputClass/pfx:adservrequest/pfx:operation,
+".process"
+)</processNameXPath>
+        </config>
+        <pd:inputBindings>
+            <xsl:copy-of select="$ParseRequest/ns:ActivityOutputClass/pfx:adservrequest"/>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="NotAllowed">
+        <pd:type>com.tibco.plugin.json.activities.JSONRenderActivity</pd:type>
+        <pd:resourceType>ae.activities.JSONRenderActivity</pd:resourceType>
+        <pd:x>330</pd:x>
+        <pd:y>201</pd:y>
+        <config>
+            <SchemaType>xsdType</SchemaType>
+            <BadgerfishCheck>false</BadgerfishCheck>
+            <ActivityInputEditor>
+                <xsd:element name="root">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="responsestatus" type="xsd:string" minOccurs="0"/>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </ActivityInputEditor>
+        </config>
+        <pd:inputBindings>
+            <ns:ActivityInputClass>
+                <root>
+                    <responsestatus>
+                        <xsl:value-of select="&quot;token or adcount abnormal&quot;"/>
+                    </responsestatus>
+                </root>
+            </ns:ActivityInputClass>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>ADServRequest</pd:from>
+        <pd:to>ParseRequest</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>refuse</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ParseRequest</pd:from>
+        <pd:to>Token_AdCounts_Filter</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Token_AdCounts_Filter</pd:from>
+        <pd:to>NotAllowed</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>otherwise</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ADServResponse</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Token_AdCounts_Filter</pd:from>
+        <pd:to>ADSubAuto</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>($Token_AdCounts_Filter/root/token_ok=1 and 
+$Token_AdCounts_Filter/root/adcount_ok=1)
+or
+($Token_AdCounts_Filter/root/token_ok="true"
+and 
+$Token_AdCounts_Filter/root/adcount_ok="true")</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>NotAllowed</pd:from>
+        <pd:to>refuse</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ADSubAuto</pd:from>
+        <pd:to>ADServResponse</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

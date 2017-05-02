@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:pfx="http://www.tibco.com/schemas/MobCastleAD_JSON_1120/API_SSP/Sample/Schema.xsd" xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:ns="http://www.tibco.com/pe/DeployedVarsType" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <xsd:import namespace="http://www.tibco.com/schemas/MobCastleAD_JSON_1120/API_SSP/Sample/Schema.xsd" schemaLocation="/API_AdServing/Process/SSP_JSON_Schema.xsd"/>
+    <pd:name>API_AdServing/Process/creative_list_response.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startType ref="pfx:product_list"/>
+    <pd:startX>150</pd:startX>
+    <pd:startY>115</pd:startY>
+    <pd:returnBindings>
+        <root>
+            <xsl:copy-of select="$creative_list_response/AccumulatedOutput/pfx:creative_list_response"/>
+        </root>
+    </pd:returnBindings>
+    <pd:endName>End</pd:endName>
+    <pd:endType>
+        <xsd:element name="root">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element ref="pfx:creative_list_response" minOccurs="0" maxOccurs="unbounded"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+    </pd:endType>
+    <pd:endX>453</pd:endX>
+    <pd:endY>107</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1491470183175</pd:targetNamespace>
+    <pd:group name="Group">
+        <pd:type>com.tibco.pe.core.LoopGroup</pd:type>
+        <pd:resourceType>ae.process.group</pd:resourceType>
+        <pd:x>204</pd:x>
+        <pd:y>23</pd:y>
+        <pd:width>167</pd:width>
+        <pd:height>160</pd:height>
+        <pd:collapsedWidth>57</pd:collapsedWidth>
+        <pd:collapsedHeight>70</pd:collapsedHeight>
+        <pd:groupVariables/>
+        <pd:joinToggle>inherit</pd:joinToggle>
+        <config>
+            <pd:groupType>inputLoop</pd:groupType>
+            <pd:serializable>false</pd:serializable>
+            <pd:over>$Start/pfx:product_list/pfx:creative_list</pd:over>
+            <pd:iterationElementSlot>creative_element</pd:iterationElementSlot>
+            <pd:indexSlot>index</pd:indexSlot>
+            <pd:outSlot>creative_list_response</pd:outSlot>
+            <pd:activityOutputName>Set_W_H</pd:activityOutputName>
+            <pd:accumulateOutput>true</pd:accumulateOutput>
+        </config>
+        <pd:inputBindings/>
+        <pd:expanded>true</pd:expanded>
+        <pd:transition>
+            <pd:from>start</pd:from>
+            <pd:to>Set_W_H</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>Set_W_H</pd:from>
+            <pd:to>end</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:activity name="Set_W_H">
+            <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+            <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+            <pd:x>279</pd:x>
+            <pd:y>96</pd:y>
+            <config>
+                <element ref="pfx:creative_list_response"/>
+            </config>
+            <pd:inputBindings>
+                <pfx:creative_list_response>
+                    <xsl:if test="$creative_element/pfx:creative_list/pfx:w">
+                        <pfx:w>
+                            <xsl:value-of select="$creative_element/pfx:creative_list/pfx:w"/>
+                        </pfx:w>
+                    </xsl:if>
+                    <xsl:if test="$creative_element/pfx:creative_list/pfx:h">
+                        <pfx:h>
+                            <xsl:value-of select="$creative_element/pfx:creative_list/pfx:h"/>
+                        </pfx:h>
+                    </xsl:if>
+                    <pfx:creative_url>
+                        <xsl:value-of select="concat(&#xA;$_globalVariables/ns:GlobalVariables/SSPNewRedis/picpath,&#xA;$Start/pfx:product_list/pfx:creative_id,&#xA;&quot;/&quot;,&#xA;$creative_element/pfx:creative_list/pfx:w,&#xA;&quot;-&quot;,&#xA;$creative_element/pfx:creative_list/pfx:h,&#xA;&quot;.&quot;,&#xA;$creative_element/pfx:creative_list/pfx:format&#xA;)"/>
+                    </pfx:creative_url>
+                </pfx:creative_list_response>
+            </pd:inputBindings>
+        </pd:activity>
+    </pd:group>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>Group</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Group</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

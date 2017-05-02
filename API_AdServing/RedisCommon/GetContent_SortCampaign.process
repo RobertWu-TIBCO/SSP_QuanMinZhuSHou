@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns="http://www.tibco.com/pe/DeployedVarsType" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <pd:name>API_AdServing/RedisCommon/GetContent_SortCampaign.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startType>
+        <xsd:element name="root">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element name="keyname" type="xsd:string" minOccurs="0"/>
+                    <xsd:element name="adcounts" type="xsd:int" minOccurs="0"/>
+                    <xsd:element name="NotGet" type="xsd:int" minOccurs="0"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+    </pd:startType>
+    <pd:startX>150</pd:startX>
+    <pd:startY>64</pd:startY>
+    <pd:returnBindings>
+        <root>
+            <xsl:for-each select="$GetFromRedis/javaCodeActivityOutput/campids">
+                <campids>
+                    <xsl:value-of select="."/>
+                </campids>
+            </xsl:for-each>
+        </root>
+    </pd:returnBindings>
+    <pd:endName>End</pd:endName>
+    <pd:endType>
+        <xsd:element name="root">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element name="campids" type="xsd:string" minOccurs="0" maxOccurs="unbounded"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+    </pd:endType>
+    <pd:endX>284</pd:endX>
+    <pd:endY>191</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1481529034665</pd:targetNamespace>
+    <pd:activity name="GetFromRedis">
+        <pd:type>com.tibco.plugin.java.JavaActivity</pd:type>
+        <pd:resourceType>ae.javapalette.javaActivity</pd:resourceType>
+        <pd:x>288</pd:x>
+        <pd:y>66</pd:y>
+        <config>
+            <fileName>GetContent_SortCampaignGetFromRedis</fileName>
+            <packageName>API_AdServing.RedisCommon.GetContent_SortCampaign</packageName>
+            <fullsource>package API_AdServing.RedisCommon.GetContent_SortCampaign;
+import java.util.*;
+import java.io.*;
+import redis.clients.jedis.Jedis;
+public class GetContent_SortCampaignGetFromRedis{
+/****** START SET/GET METHOD, DO NOT MODIFY *****/
+	protected String redis_host = "";
+	protected int redis_port = 0;
+	protected String redis_pass = "";
+	protected String camaignsort = "";
+	protected int adcounts = 0;
+	protected String[] campids = null;
+	public String getredis_host() {
+		return redis_host;
+	}
+	public void setredis_host(String val) {
+		redis_host = val;
+	}
+	public int getredis_port() {
+		return redis_port;
+	}
+	public void setredis_port(int val) {
+		redis_port = val;
+	}
+	public String getredis_pass() {
+		return redis_pass;
+	}
+	public void setredis_pass(String val) {
+		redis_pass = val;
+	}
+	public String getcamaignsort() {
+		return camaignsort;
+	}
+	public void setcamaignsort(String val) {
+		camaignsort = val;
+	}
+	public int getadcounts() {
+		return adcounts;
+	}
+	public void setadcounts(int val) {
+		adcounts = val;
+	}
+	public String[] getcampids() {
+		return campids;
+	}
+	public void setcampids(String[] val) {
+		campids = val;
+	}
+/****** END SET/GET METHOD, DO NOT MODIFY *****/
+	public GetContent_SortCampaignGetFromRedis() {
+	}
+	public void invoke() throws Exception {
+/* Available Variables: DO NOT MODIFY
+	In  : String redis_host
+	In  : int redis_port
+	In  : String redis_pass
+	In  : String camaignsort
+	In  : int adcounts
+	Out : String[] campids
+* Available Variables: DO NOT MODIFY *****/
+
+	Jedis jedis = new Jedis(redis_host, redis_port,100000);
+	jedis.auth(redis_pass);
+		Set&lt;String&gt; set=jedis.zrange(camaignsort, 0 - adcounts, -1);
+		campids=new String[set.size()];
+		set.toArray(campids);
+}
+}
+</fullsource>
+            <outputData>
+                <row>
+                    <fieldName>campids</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>repeating</fieldRequired>
+                </row>
+            </outputData>
+            <inputData>
+                <row>
+                    <fieldName>redis_host</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+                <row>
+                    <fieldName>redis_port</fieldName>
+                    <fieldType>int</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+                <row>
+                    <fieldName>redis_pass</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+                <row>
+                    <fieldName>camaignsort</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+                <row>
+                    <fieldName>adcounts</fieldName>
+                    <fieldType>int</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+            </inputData>
+            <byteCode>
+                <class>
+                    <name>GetContent_SortCampaignGetFromRedis</name>
+                    <byteCode>yv66vgAAADMAVQkAEwA5CQATADoJABMAOwkAEwA8CQATAD0JABMAPgoAFAA/CABABwBBAwABhqAKAAkAQgoACQBDBf//////////CgAJAEQLAEUARgcARwsARQBIBwBJBwBKAQAKcmVkaXNfaG9zdAEAEkxqYXZhL2xhbmcvU3RyaW5nOwEACnJlZGlzX3BvcnQBAAFJAQAKcmVkaXNfcGFzcwEAC2NhbWFpZ25zb3J0AQAIYWRjb3VudHMBAAdjYW1waWRzAQATW0xqYXZhL2xhbmcvU3RyaW5nOwEADWdldHJlZGlzX2hvc3QBABQoKUxqYXZhL2xhbmcvU3RyaW5nOwEABENvZGUBAA9MaW5lTnVtYmVyVGFibGUBAA1zZXRyZWRpc19ob3N0AQAVKExqYXZhL2xhbmcvU3RyaW5nOylWAQANZ2V0cmVkaXNfcG9ydAEAAygpSQEADXNldHJlZGlzX3BvcnQBAAQoSSlWAQANZ2V0cmVkaXNfcGFzcwEADXNldHJlZGlzX3Bhc3MBAA5nZXRjYW1haWduc29ydAEADnNldGNhbWFpZ25zb3J0AQALZ2V0YWRjb3VudHMBAAtzZXRhZGNvdW50cwEACmdldGNhbXBpZHMBABUoKVtMamF2YS9sYW5nL1N0cmluZzsBAApzZXRjYW1waWRzAQAWKFtMamF2YS9sYW5nL1N0cmluZzspVgEABjxpbml0PgEAAygpVgEABmludm9rZQEACkV4Y2VwdGlvbnMHAEsBAApTb3VyY2VGaWxlAQAoR2V0Q29udGVudF9Tb3J0Q2FtcGFpZ25HZXRGcm9tUmVkaXMuamF2YQwAFQAWDAAXABgMABkAFgwAGgAWDAAbABgMABwAHQwAMgAzAQAAAQAZcmVkaXMvY2xpZW50cy9qZWRpcy9KZWRpcwwAMgBMDABNAE4MAE8AUAcAUQwAUgAlAQAQamF2YS9sYW5nL1N0cmluZwwAUwBUAQBVQVBJX0FkU2VydmluZy9SZWRpc0NvbW1vbi9HZXRDb250ZW50X1NvcnRDYW1wYWlnbi9HZXRDb250ZW50X1NvcnRDYW1wYWlnbkdldEZyb21SZWRpcwEAEGphdmEvbGFuZy9PYmplY3QBABNqYXZhL2xhbmcvRXhjZXB0aW9uAQAXKExqYXZhL2xhbmcvU3RyaW5nO0lJKVYBAARhdXRoAQAmKExqYXZhL2xhbmcvU3RyaW5nOylMamF2YS9sYW5nL1N0cmluZzsBAAZ6cmFuZ2UBACUoTGphdmEvbGFuZy9TdHJpbmc7SkopTGphdmEvdXRpbC9TZXQ7AQANamF2YS91dGlsL1NldAEABHNpemUBAAd0b0FycmF5AQAoKFtMamF2YS9sYW5nL09iamVjdDspW0xqYXZhL2xhbmcvT2JqZWN0OwAhABMAFAAAAAYABAAVABYAAAAEABcAGAAAAAQAGQAWAAAABAAaABYAAAAEABsAGAAAAAQAHAAdAAAADgABAB4AHwABACAAAAAdAAEAAQAAAAUqtAABsAAAAAEAIQAAAAYAAQAAAA4AAQAiACMAAQAgAAAAIgACAAIAAAAGKiu1AAGxAAAAAQAhAAAACgACAAAAEQAFABIAAQAkACUAAQAgAAAAHQABAAEAAAAFKrQAAqwAAAABACEAAAAGAAEAAAAUAAEAJgAnAAEAIAAAACIAAgACAAAABiobtQACsQAAAAEAIQAAAAoAAgAAABcABQAYAAEAKAAfAAEAIAAAAB0AAQABAAAABSq0AAOwAAAAAQAhAAAABgABAAAAGgABACkAIwABACAAAAAiAAIAAgAAAAYqK7UAA7EAAAABACEAAAAKAAIAAAAdAAUAHgABACoAHwABACAAAAAdAAEAAQAAAAUqtAAEsAAAAAEAIQAAAAYAAQAAACAAAQArACMAAQAgAAAAIgACAAIAAAAGKiu1AASxAAAAAQAhAAAACgACAAAAIwAFACQAAQAsACUAAQAgAAAAHQABAAEAAAAFKrQABawAAAABACEAAAAGAAEAAAAmAAEALQAnAAEAIAAAACIAAgACAAAABiobtQAFsQAAAAEAIQAAAAoAAgAAACkABQAqAAEALgAvAAEAIAAAAB0AAQABAAAABSq0AAawAAAAAQAhAAAABgABAAAALAABADAAMQABACAAAAAiAAIAAgAAAAYqK7UABrEAAAABACEAAAAKAAIAAAAvAAUAMAABADIAMwABACAAAABaAAIAAQAAACYqtwAHKhIItQABKgO1AAIqEgi1AAMqEgi1AAQqA7UABSoBtQAGsQAAAAEAIQAAACIACAAAADIABAAHAAoACAAPAAkAFQAKABsACwAgAAwAJQAzAAEANAAzAAIAIAAAAHMABgADAAAAR7sACVkqtAABKrQAAhIKtwALTCsqtAADtgAMVysqtAAEAyq0AAVkhRQADbYAD00qLLkAEAEAvQARtQAGLCq0AAa5ABICAFexAAAAAQAhAAAAGgAGAAAAPgASAD8AGwBAAC4AQQA7AEIARgBDADUAAAAEAAEANgABADcAAAACADg=</byteCode>
+                </class>
+            </byteCode>
+        </config>
+        <pd:inputBindings>
+            <javaCodeActivityInput>
+                <redis_host>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/SSPNewRedis/ip"/>
+                </redis_host>
+                <redis_port>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/SSPNewRedis/port"/>
+                </redis_port>
+                <redis_pass>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/SSPNewRedis/pass"/>
+                </redis_pass>
+                <xsl:if test="$Start/root/keyname">
+                    <camaignsort>
+                        <xsl:value-of select="$Start/root/keyname"/>
+                    </camaignsort>
+                </xsl:if>
+                <xsl:if test="$Start/root/adcounts">
+                    <adcounts>
+                        <xsl:value-of select="$Start/root/adcounts"/>
+                    </adcounts>
+                </xsl:if>
+            </javaCodeActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>GetFromRedis</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>otherwise</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>GetFromRedis</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>$Start/root/NotGet=1</pd:xpath>
+    </pd:transition>
+</pd:ProcessDefinition>

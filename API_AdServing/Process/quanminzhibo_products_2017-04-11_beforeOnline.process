@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns1="http://www.tibco.com/pe/DeployedVarsType" xmlns:ns="http://www.tibco.com/namespaces/tnt/plugins/json" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tib="http://www.tibco.com/bw/xslt/custom-functions" xmlns:pfx="http://www.tibco.com/schemas/MobCastleAD_JSON_1120/API_SSP/Sample/Schema.xsd">
+    <xsd:import namespace="http://www.tibco.com/schemas/MobCastleAD_JSON_1120/API_SSP/Sample/Schema.xsd" schemaLocation="/API_AdServing/Process/SSP_JSON_Schema.xsd"/>
+    <pd:name>API_AdServing/Process/quanminzhibo_products_2017-04-11_beforeOnline.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startType ref="pfx:adservrequest"/>
+    <pd:startX>52</pd:startX>
+    <pd:startY>199</pd:startY>
+    <pd:returnBindings>
+        <pfx:SubEnd>
+            <pfx:JSONResponse>
+                <xsl:value-of select="concat($abnormal/ns:ActivityOutputClass/jsonString, $Render-JSON/ns:ActivityOutputClass/jsonString)"/>
+            </pfx:JSONResponse>
+        </pfx:SubEnd>
+    </pd:returnBindings>
+    <pd:endName>End</pd:endName>
+    <pd:endType ref="pfx:SubEnd"/>
+    <pd:endX>637</pd:endX>
+    <pd:endY>200</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1481009561257</pd:targetNamespace>
+    <pd:activity name="Render JSON">
+        <pd:type>com.tibco.plugin.json.activities.JSONRenderActivity</pd:type>
+        <pd:resourceType>ae.activities.JSONRenderActivity</pd:resourceType>
+        <pd:x>644</pd:x>
+        <pd:y>93</pd:y>
+        <config>
+            <SchemaType>xsdType</SchemaType>
+            <BadgerfishCheck>false</BadgerfishCheck>
+            <ActivityInputEditor ref="pfx:adservresponse"/>
+        </config>
+        <pd:inputBindings>
+            <ns:ActivityInputClass>
+                <pfx:adservresponse>
+                    <pfx:responsestatus>
+                        <xsl:value-of select="&quot;success&quot;"/>
+                    </pfx:responsestatus>
+                    <xsl:copy-of select="$CampPair/AccumulatedOutput/pfx:adserving"/>
+                    <pfx:timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </pfx:timestamp>
+                </pfx:adservresponse>
+            </ns:ActivityInputClass>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Filter">
+        <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+        <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+        <pd:x>184</pd:x>
+        <pd:y>203</pd:y>
+        <config>
+            <element>
+                <xsd:element name="root">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="wh_ok" type="xsd:boolean" minOccurs="0"/>
+                            <xsd:element name="type_format_ok" type="xsd:boolean" minOccurs="0"/>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </element>
+        </config>
+        <pd:inputBindings>
+            <root>
+                <wh_ok>
+                    <xsl:value-of select="1"/>
+                </wh_ok>
+                <type_format_ok>
+                    <xsl:value-of select="1"/>
+                </type_format_ok>
+            </root>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="SortCampaign">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>183</pd:x>
+        <pd:y>76</pd:y>
+        <config>
+            <processName>/API_AdServing/RedisCommon/GetContent_SortCampaign.process</processName>
+        </config>
+        <pd:inputBindings>
+            <root>
+                <keyname>
+                    <xsl:value-of select="&quot;sortset:camp:id:price&quot;"/>
+                </keyname>
+                <adcounts>
+                    <xsl:value-of select="if($Start/pfx:adservrequest/pfx:adcounts>0) &#xA;then&#xA;$Start/pfx:adservrequest/pfx:adcounts &#xA;else&#xA;count($Start/pfx:adservrequest/pfx:creative_list)"/>
+                </adcounts>
+            </root>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:group name="Group">
+        <pd:type>com.tibco.pe.core.LoopGroup</pd:type>
+        <pd:resourceType>ae.process.group</pd:resourceType>
+        <pd:x>260</pd:x>
+        <pd:y>1</pd:y>
+        <pd:width>274</pd:width>
+        <pd:height>151</pd:height>
+        <pd:collapsedWidth>57</pd:collapsedWidth>
+        <pd:collapsedHeight>70</pd:collapsedHeight>
+        <pd:groupVariables/>
+        <pd:joinToggle>inherit</pd:joinToggle>
+        <config>
+            <pd:groupType>inputLoop</pd:groupType>
+            <pd:serializable>false</pd:serializable>
+            <pd:over>$SortCampaign/root/campids</pd:over>
+            <pd:iterationElementSlot>campid</pd:iterationElementSlot>
+            <pd:indexSlot>index</pd:indexSlot>
+            <pd:outSlot>CampPair</pd:outSlot>
+            <pd:activityOutputName>Set_W_H</pd:activityOutputName>
+            <pd:accumulateOutput>true</pd:accumulateOutput>
+        </config>
+        <pd:inputBindings/>
+        <pd:expanded>true</pd:expanded>
+        <pd:transition>
+            <pd:from>start</pd:from>
+            <pd:to>GetRedis</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>Set_W_H</pd:from>
+            <pd:to>end</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>GetRedis</pd:from>
+            <pd:to>Set_W_H</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:activity name="GetRedis">
+            <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+            <pd:resourceType>ae.process.subprocess</pd:resourceType>
+            <pd:x>340</pd:x>
+            <pd:y>83</pd:y>
+            <config>
+                <processName>/API_AdServing/RedisCommon/GetContent_Campaign.process</processName>
+            </config>
+            <pd:inputBindings>
+                <root>
+                    <campaign_id>
+                        <xsl:value-of select="$campid/campids"/>
+                    </campaign_id>
+                </root>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="Set_W_H">
+            <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+            <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+            <pd:x>436</pd:x>
+            <pd:y>82</pd:y>
+            <config>
+                <element ref="pfx:adserving"/>
+            </config>
+            <pd:inputBindings>
+                <pfx:adserving>
+                    <xsl:if test="$GetRedis/root/campaign_id">
+                        <pfx:campid>
+                            <xsl:value-of select="$GetRedis/root/campaign_id"/>
+                        </pfx:campid>
+                    </xsl:if>
+                    <pfx:product_name>
+                        <xsl:value-of select="$GetRedis/root/productname"/>
+                    </pfx:product_name>
+                    <pfx:product_lp>
+                        <xsl:value-of select="$GetRedis/root/product_lp"/>
+                    </pfx:product_lp>
+                    <pfx:campprice>
+                        <xsl:value-of select="$GetRedis/root/campaign_expend_n"/>
+                    </pfx:campprice>
+                    <pfx:creative_url>
+                        <xsl:value-of select="concat(&#xA;$_globalVariables/ns1:GlobalVariables/SSPNewRedis/picpath,&#xA;$GetRedis/root/creative_list,&#xA;&quot;/&quot;,&#xA;if($Start/pfx:adservrequest/pfx:creative_list[$index]/pfx:w!=&quot;&quot;) then &#xA;$Start/pfx:adservrequest/pfx:creative_list[$index]/pfx:w else $Start/pfx:adservrequest/pfx:creative_list[1]/pfx:w,&#xA;&quot;-&quot;,&#xA;if($Start/pfx:adservrequest/pfx:creative_list[$index]/pfx:h!=&quot;&quot;) then &#xA;$Start/pfx:adservrequest/pfx:creative_list[$index]/pfx:h else $Start/pfx:adservrequest/pfx:creative_list[1]/pfx:h,&#xA;&quot;.&quot;,&#xA;if($Start/pfx:adservrequest/pfx:creative_list[$index]/pfx:format!=&quot;&quot;) then &#xA;$Start/pfx:adservrequest/pfx:creative_list[$index]/pfx:format else $Start/pfx:adservrequest/pfx:creative_list[1]/pfx:format&#xA;)"/>
+                    </pfx:creative_url>
+                    <pfx:camp_tl>
+                        <xsl:value-of select="$GetRedis/root/campaign_tl"/>
+                    </pfx:camp_tl>
+                    <xsl:if test="$GetRedis/root/product_appid">
+                        <pfx:app_id>
+                            <xsl:value-of select="$GetRedis/root/product_appid"/>
+                        </pfx:app_id>
+                    </xsl:if>
+                </pfx:adserving>
+            </pd:inputBindings>
+        </pd:activity>
+    </pd:group>
+    <pd:activity name="abnormal">
+        <pd:type>com.tibco.plugin.json.activities.JSONRenderActivity</pd:type>
+        <pd:resourceType>ae.activities.JSONRenderActivity</pd:resourceType>
+        <pd:x>318</pd:x>
+        <pd:y>202</pd:y>
+        <config>
+            <SchemaType>xsdType</SchemaType>
+            <BadgerfishCheck>false</BadgerfishCheck>
+            <ActivityInputEditor>
+                <xsd:element name="root">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="responsestatus" type="xsd:string" minOccurs="0"/>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </ActivityInputEditor>
+        </config>
+        <pd:inputBindings>
+            <ns:ActivityInputClass>
+                <root>
+                    <responsestatus>
+                        <xsl:value-of select="&quot;abnormal width or height specified for creatives&quot;"/>
+                    </responsestatus>
+                </root>
+            </ns:ActivityInputClass>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Render JSON</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Filter</pd:from>
+        <pd:to>abnormal</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>otherwise</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Group</pd:from>
+        <pd:to>Render JSON</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Filter</pd:from>
+        <pd:to>SortCampaign</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>($Filter/root/wh_ok=1 and 
+$Filter/root/type_format_ok=1)
+or
+($Filter/root/wh_ok="true"
+and 
+$Filter/root/type_format_ok="true")</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>SortCampaign</pd:from>
+        <pd:to>Group</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>Filter</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>abnormal</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>
